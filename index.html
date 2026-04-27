@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Keza Admin — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;700;800&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     LOGIN PAGE
+════════════════════════════════════════════ -->
+<div id="loginPage">
+
+  <div class="login-wrap">
+
+    <!-- Left: Brand panel -->
+    <aside class="login-brand">
+      <div class="brand-logo">
+        <div class="brand-icon">🛡️</div>
+        <div class="brand-name">
+          KEZA
+          <small>ADMIN CONSOLE</small>
+        </div>
+      </div>
+
+      <div>
+        <p class="brand-tagline">
+          Manage everything.<br/>
+          <em>All in one place.</em>
+        </p>
+        <p style="font-size:0.82rem;color:var(--sand-2);margin-top:10px;line-height:1.7;">
+          A complete business management platform built for modern African enterprises.
+        </p>
+      </div>
+
+      <ul class="brand-features">
+        <li class="bf-item"><span class="bf-dot"></span>Real-time inventory tracking</li>
+        <li class="bf-item"><span class="bf-dot"></span>Revenue analytics &amp; reporting</li>
+        <li class="bf-item"><span class="bf-dot"></span>Order &amp; customer management</li>
+        <li class="bf-item"><span class="bf-dot"></span>Multi-role user access control</li>
+      </ul>
+
+      <p style="font-size:0.7rem;color:var(--sand-2);opacity:0.5;">
+        © 2026 Keza Systems · Kigali, Rwanda
+      </p>
+    </aside>
+
+    <!-- Right: Form panel -->
+    <section class="login-form-panel">
+      <h2>Welcome back</h2>
+      <p>Sign in to access your admin console.</p>
+
+      <!-- Error message -->
+      <div class="login-error" id="loginError" role="alert"></div>
+
+      <!-- Username -->
+      <div class="fg">
+        <label for="loginUser">Username</label>
+        <input
+          type="text"
+          id="loginUser"
+          placeholder="Enter your username"
+          autocomplete="username"
+          spellcheck="false"
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="fg">
+        <label for="loginPass">Password</label>
+        <input
+          type="password"
+          id="loginPass"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        />
+      </div>
+
+      <!-- Demo hint -->
+      <p class="login-hint">
+        Demo: username <em>admin</em> · password <em>admin123</em>
+      </p>
+
+      <!-- Submit -->
+      <button class="btn-login" id="loginBtn" onclick="attemptLogin()">
+        Sign In →
+      </button>
+
+      <p class="login-footer">
+        Protected system. Unauthorised access is prohibited.
+      </p>
+    </section>
+
+  </div>
+
+</div><!-- /loginPage -->
+
+
+<!-- ════════════════════════════════════════════
+     APP SHELL (hidden until login)
+════════════════════════════════════════════ -->
+<div id="appShell" class="hidden">
+
+  <!-- Mobile overlay + hamburger -->
+  <div class="overlay" id="overlay" onclick="closeMobile()"></div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar" role="complementary" aria-label="Admin sidebar">
+
+    <div class="sb-brand">
+      <div class="sb-brand-icon">🛡️</div>
+      <div class="sb-brand-text">
+        KEZA
+        <small>ADMIN CONSOLE</small>
+      </div>
+    </div>
+
+    <nav class="sb-nav" role="navigation" aria-label="Dashboard navigation">
+
+      <p class="sb-group-label">Main</p>
+
+      <button class="sb-btn" data-p="overview"  onclick="navigate('overview')"  aria-current="page">
+        <span class="sb-btn-icon">🏠</span> Overview
+      </button>
+      <button class="sb-btn" data-p="analytics" onclick="navigate('analytics')">
+        <span class="sb-btn-icon">📈</span> Analytics
+      </button>
+      <button class="sb-btn" data-p="orders"    onclick="navigate('orders')">
+        <span class="sb-btn-icon">🛒</span> Orders
+        <span class="sb-badge">3</span>
+      </button>
+
+      <p class="sb-group-label">Management</p>
+
+      <button class="sb-btn" data-p="users"    onclick="navigate('users')">
+        <span class="sb-btn-icon">👥</span> Users
+      </button>
+      <button class="sb-btn" data-p="settings" onclick="navigate('settings')">
+        <span class="sb-btn-icon">⚙️</span> Settings
+      </button>
+
+      <p class="sb-group-label">External</p>
+
+      <button class="sb-btn" onclick="window.open('inventory.html')">
+        <span class="sb-btn-icon">📦</span> Inventory System ↗
+      </button>
+
+    </nav>
+
+    <!-- Logged-in user display -->
+    <div class="sb-footer">
+      <div class="sb-user" onclick="navigate('settings')" title="View profile">
+        <div class="sb-user-av" id="sbUserEmoji">👤</div>
+        <div>
+          <div class="sb-user-name"  id="sbUserName">Loading…</div>
+          <div class="sb-user-role"  id="sbUserRole">—</div>
+        </div>
+        <span class="sb-user-dot" title="Online"></span>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── MAIN AREA ── -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar" role="banner">
+      <div class="tb-left">
+        <h1 id="topbarTitle">Overview</h1>
+        <div class="tb-breadcrumb">
+          <span>Keza Admin</span>
+          <span class="sep">›</span>
+          <span id="topbarSub">Overview</span>
+        </div>
+      </div>
+
+      <div class="tb-right">
+        <div class="tb-clock" id="liveClk" aria-label="Current time">--:--:--</div>
+
+        <!-- Search bar -->
+        <div class="tb-search" role="search">
+          <span style="color:var(--sand-2)">🔍</span>
+          <input type="text" placeholder="Search…" aria-label="Search dashboard"/>
+        </div>
+
+        <!-- Notifications -->
+        <button class="tb-icon-btn tb-notif-dot" title="Notifications" aria-label="Notifications">🔔</button>
+
+        <!-- Logout button -->
+        <button class="btn-logout" onclick="confirmLogout()" aria-label="Sign out">
+          🚪 Sign Out
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="content" id="contentArea">
+
+
+      <!-- ▓▓▓ OVERVIEW ▓▓▓ -->
+      <div class="pg" id="pg-overview" aria-label="Overview">
+
+        <div class="pg-title">
+          <h2><span class="accent-line"></span>Business Overview</h2>
+          <p>Live snapshot of your business performance · April 2026</p>
+        </div>
+
+        <!-- KPI Cards — CSS Grid (4-col) -->
+        <div class="kpi-row">
+
+          <article class="kpi terra">
+            <div class="kpi-label">Total Revenue</div>
+            <div class="kpi-value">9.2M</div>
+            <span class="kpi-pill up">↑ 14.3%</span>
+            <div class="kpi-sub">RWF · vs last month</div>
+          </article>
+
+          <article class="kpi teal">
+            <div class="kpi-label">Total Orders</div>
+            <div class="kpi-value">1,284</div>
+            <span class="kpi-pill up">↑ 8.1%</span>
+            <div class="kpi-sub">this month</div>
+          </article>
+
+          <article class="kpi gold">
+            <div class="kpi-label">Active Users</div>
+            <div class="kpi-value">347</div>
+            <span class="kpi-pill flat">→ 0.4%</span>
+            <div class="kpi-sub">registered accounts</div>
+          </article>
+
+          <article class="kpi rose">
+            <div class="kpi-label">Pending Orders</div>
+            <div class="kpi-value">23</div>
+            <span class="kpi-pill down">↑ 5 new</span>
+            <div class="kpi-sub">need attention</div>
+          </article>
+
+        </div>
+
+        <!-- Row 1: Revenue chart + Donut -->
+        <div class="g3">
+
+          <!-- Bar chart panel -->
+          <article class="panel">
+            <div class="ph">
+              <span class="ph-title">Monthly Revenue (RWF × 1000)</span>
+              <button class="btn btn-ghost btn-sm" onclick="toast('Export started!','ok')">⬇ Export</button>
+            </div>
+            <div class="bar-chart" id="revChart" role="img" aria-label="Monthly revenue bar chart"></div>
+
+            <!-- Quick stat row -->
+            <div style="display:flex;gap:20px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;">
+              <div style="text-align:center;flex:1;">
+                <div style="font-family:var(--font-display);font-size:1.3rem;color:var(--cream)">9.2M</div>
+                <div style="font-size:0.68rem;color:var(--sand-2)">Dec Revenue</div>
+              </div>
+              <div style="text-align:center;flex:1;">
+                <div style="font-family:var(--font-display);font-size:1.3rem;color:var(--teal)">+14%</div>
+                <div style="font-size:0.68rem;color:var(--sand-2)">Growth</div>
+              </div>
+              <div style="text-align:center;flex:1;">
+                <div style="font-family:var(--font-display);font-size:1.3rem;color:var(--cream)">6.1M</div>
+                <div style="font-size:0.68rem;color:var(--sand-2)">Avg/Month</div>
+              </div>
+              <div style="text-align:center;flex:1;">
+                <div style="font-family:var(--font-display);font-size:1.3rem;color:var(--rose)">3.2M</div>
+                <div style="font-size:0.68rem;color:var(--sand-2)">Jan (low)</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Donut chart panel -->
+          <article class="panel">
+            <div class="ph"><span class="ph-title">Sales by Category</span></div>
+            <div class="donut-section">
+              <div class="donut-ring" id="donutRing" role="img" aria-label="Sales by category">
+                <div class="donut-hole">
+                  <span>100%</span>
+                  <small>total</small>
+                </div>
+              </div>
+              <div class="donut-legend" id="donutLegend"></div>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Row 2: Recent orders + Activity -->
+        <div class="g2">
+
+          <!-- Recent orders -->
+          <article class="panel" style="overflow:hidden;">
+            <div class="ph">
+              <span class="ph-title">Recent Orders</span>
+              <button class="btn btn-ghost btn-sm" onclick="navigate('orders')">View All →</button>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="dt" aria-label="Recent orders">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recentTbody"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <!-- Activity feed -->
+          <article class="panel">
+            <div class="ph"><span class="ph-title">Recent Activity</span></div>
+            <div class="act-list" id="actFeed"></div>
+          </article>
+
+        </div>
+
+        <!-- Top Products -->
+        <article class="panel">
+          <div class="ph">
+            <span class="ph-title">Top Selling Products</span>
+            <span style="font-size:0.76rem;color:var(--sand-2)">Units sold this month</span>
+          </div>
+          <div id="topProds"></div>
+        </article>
+
+      </div><!-- /overview -->
+
+
+      <!-- ▓▓▓ ANALYTICS ▓▓▓ -->
+      <div class="pg" id="pg-analytics" aria-label="Analytics">
+
+        <div class="pg-title">
+          <h2><span class="accent-line"></span>Analytics</h2>
+          <p>Full-year performance metrics and market breakdowns</p>
+        </div>
+
+        <div class="kpi-row">
+          <article class="kpi terra">
+            <div class="kpi-label">Annual Revenue</div>
+            <div class="kpi-value">66.3M</div>
+            <span class="kpi-pill up">↑ 22%</span>
+            <div class="kpi-sub">RWF · vs last year</div>
+          </article>
+          <article class="kpi teal">
+            <div class="kpi-label">Avg Order Value</div>
+            <div class="kpi-value">51.6K</div>
+            <span class="kpi-pill up">↑ 6.4%</span>
+            <div class="kpi-sub">RWF · vs last year</div>
+          </article>
+          <article class="kpi gold">
+            <div class="kpi-label">Return Rate</div>
+            <div class="kpi-value">2.1%</div>
+            <span class="kpi-pill up">↓ 0.3%</span>
+            <div class="kpi-sub">improvement year-on-year</div>
+          </article>
+          <article class="kpi rose">
+            <div class="kpi-label">Conversion Rate</div>
+            <div class="kpi-value">18.4%</div>
+            <span class="kpi-pill up">↑ 2.1%</span>
+            <div class="kpi-sub">vs last year</div>
+          </article>
+        </div>
+
+        <article class="panel" style="margin-bottom:18px;">
+          <div class="ph">
+            <span class="ph-title">Full-Year Revenue 2026 (RWF × 1000)</span>
+            <button class="btn btn-ghost btn-sm" onclick="toast('CSV export started','ok')">⬇ CSV</button>
+          </div>
+          <div class="bar-chart" id="revChartFull" style="height:180px;" role="img" aria-label="Full year revenue"></div>
+        </article>
+
+        <div class="g4">
+
+          <article class="panel">
+            <div class="ph"><span class="ph-title">Top Markets</span></div>
+            <div class="prog-list">
+              <div>
+                <div class="prog-row-lbl"><span>Rwanda</span><span>48%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:48%;background:var(--terra)"></div></div>
+              </div>
+              <div>
+                <div class="prog-row-lbl"><span>Kenya</span><span>27%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:27%;background:var(--teal)"></div></div>
+              </div>
+              <div>
+                <div class="prog-row-lbl"><span>Uganda</span><span>14%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:14%;background:var(--gold)"></div></div>
+              </div>
+              <div>
+                <div class="prog-row-lbl"><span>Tanzania</span><span>11%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:11%;background:var(--rose)"></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="ph"><span class="ph-title">Order Status</span></div>
+            <div class="prog-list">
+              <div>
+                <div class="prog-row-lbl"><span>Completed</span><span>74%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:74%;background:var(--teal)"></div></div>
+              </div>
+              <div>
+                <div class="prog-row-lbl"><span>Pending</span><span>18%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:18%;background:var(--gold)"></div></div>
+              </div>
+              <div>
+                <div class="prog-row-lbl"><span>Cancelled</span><span>8%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:8%;background:var(--rose)"></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="ph"><span class="ph-title">User Growth</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:4px;">
+              <div style="text-align:center;flex:1;min-width:60px;">
+                <div style="font-family:var(--font-display);font-size:1.6rem;color:var(--teal)">+47</div>
+                <div style="font-size:0.68rem;color:var(--sand-2)">This Month</div>
+              </div>
+              <div style="text-align:center;flex:1;min-width:60px;">
+                <div style="font-family:var(--font-display);font-size:1.6rem;color:var(--cream)">347</div>
+                <div style="font-size:0.68rem;color:var(--sand-2)">Active</div>
+              </div>
+              <div style="text-align:center;flex:1;min-width:60px;">
+                <div style="font-family:var(--font-display);font-size:1.6rem;color:var(--rose)">12</div>
+                <div style="font-size:0.68rem;color:var(--sand-2)">Inactive</div>
+              </div>
+              <div style="text-align:center;flex:1;min-width:60px;">
+                <div style="font-family:var(--font-display);font-size:1.6rem;color:var(--terra)">96%</div>
+                <div style="font-size:0.68rem;color:var(--sand-2)">Retention</div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+      </div><!-- /analytics -->
+
+
+      <!-- ▓▓▓ ORDERS ▓▓▓ -->
+      <div class="pg" id="pg-orders" aria-label="Orders">
+
+        <div class="pg-title">
+          <h2><span class="accent-line"></span>Orders</h2>
+          <p>Manage and track all customer orders</p>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm">All</button>
+            <button class="btn btn-ghost btn-sm">Pending</button>
+            <button class="btn btn-ghost btn-sm">Completed</button>
+            <button class="btn btn-ghost btn-sm">Cancelled</button>
+          </div>
+          <button class="btn btn-terra btn-sm" onclick="toast('Export started!','ok')">⬇ Export Orders</button>
+        </div>
+
+        <article class="panel">
+          <div class="ph">
+            <span class="ph-title">All Orders</span>
+            <span style="font-size:0.76rem;color:var(--sand-2)">7 records total</span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="dt" aria-label="All orders">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Product</th>
+                  <th style="text-align:center">Qty</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="allOrdersTbody"></tbody>
+            </table>
+          </div>
+        </article>
+
+      </div><!-- /orders -->
+
+
+      <!-- ▓▓▓ USERS ▓▓▓ -->
+      <div class="pg" id="pg-users" aria-label="User management">
+
+        <div class="pg-title">
+          <h2><span class="accent-line"></span>User Management</h2>
+          <p>Manage team members, roles, and permissions</p>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+          <p style="font-size:0.84rem;color:var(--sand-2)">5 total · 4 active · 1 inactive</p>
+          <button class="btn btn-terra" onclick="toast('Add user feature coming soon','inf')">➕ Add User</button>
+        </div>
+
+        <article class="panel">
+          <div style="overflow-x:auto;">
+            <table class="dt" aria-label="Users">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Member</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTbody"></tbody>
+            </table>
+          </div>
+        </article>
+
+      </div><!-- /users -->
+
+
+      <!-- ▓▓▓ SETTINGS ▓▓▓ -->
+      <div class="pg" id="pg-settings" aria-label="Settings">
+
+        <div class="pg-title">
+          <h2><span class="accent-line"></span>Settings</h2>
+          <p>Configure your admin console preferences</p>
+        </div>
+
+        <div class="g2">
+
+          <!-- General settings -->
+          <article class="panel">
+            <div class="ph"><span class="ph-title">General</span></div>
+            <div class="sf">
+              <div class="sf-row">
+                <label for="sCompany">Company Name</label>
+                <input type="text" id="sCompany" value="Keza Systems Ltd" placeholder="Company name"/>
+              </div>
+              <div class="sf-row">
+                <label for="sEmail">Admin Email</label>
+                <input type="email" id="sEmail" value="admin@keza.rw" placeholder="Email address"/>
+              </div>
+              <div class="sf-row">
+                <label for="sCurrency">Default Currency</label>
+                <select id="sCurrency">
+                  <option selected>RWF — Rwandan Franc</option>
+                  <option>USD — US Dollar</option>
+                  <option>EUR — Euro</option>
+                  <option>KES — Kenyan Shilling</option>
+                </select>
+              </div>
+              <div class="sf-row">
+                <label for="sTZ">Timezone</label>
+                <select id="sTZ">
+                  <option selected>Africa/Kigali (CAT, UTC+2)</option>
+                  <option>Africa/Nairobi (EAT, UTC+3)</option>
+                  <option>Europe/London (GMT, UTC+0)</option>
+                </select>
+              </div>
+              <button class="btn btn-terra" onclick="saveSettings()">💾 Save Changes</button>
+            </div>
+          </article>
+
+          <!-- Notifications -->
+          <article class="panel">
+            <div class="ph"><span class="ph-title">Notifications</span></div>
+
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Low Stock Alerts</div>
+                <div class="toggle-sub">Notify when items drop below threshold</div>
+              </div>
+              <label class="tgl"><input type="checkbox" checked/><span class="tgl-track"></span></label>
+            </div>
+
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">New Order Alerts</div>
+                <div class="toggle-sub">Notify on every new order received</div>
+              </div>
+              <label class="tgl"><input type="checkbox" checked/><span class="tgl-track"></span></label>
+            </div>
+
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Weekly Summary Email</div>
+                <div class="toggle-sub">Receive a weekly performance digest</div>
+              </div>
+              <label class="tgl"><input type="checkbox"/><span class="tgl-track"></span></label>
+            </div>
+
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Security Alerts</div>
+                <div class="toggle-sub">Failed login attempts &amp; unusual activity</div>
+              </div>
+              <label class="tgl"><input type="checkbox" checked/><span class="tgl-track"></span></label>
+            </div>
+
+            <div style="margin-top:18px;">
+              <button class="btn btn-ghost" onclick="saveSettings()">Update Preferences</button>
+            </div>
+          </article>
+
+          <!-- Account (profile) -->
+          <article class="panel">
+            <div class="ph"><span class="ph-title">Account</span></div>
+            <div class="sf">
+              <div class="sf-row">
+                <label>Logged In As</label>
+                <input type="text" id="acctName" readonly style="cursor:default;opacity:0.7"/>
+              </div>
+              <div class="sf-row">
+                <label>Role</label>
+                <input type="text" id="acctRole" readonly style="cursor:default;opacity:0.7"/>
+              </div>
+              <button class="btn btn-ghost" onclick="toast('Password reset email sent!','ok')">🔑 Change Password</button>
+              <button class="btn btn-ghost" style="border-color:rgba(224,85,85,0.4);color:var(--rose);" onclick="confirmLogout()">🚪 Sign Out</button>
+            </div>
+          </article>
+
+          <!-- Security info -->
+          <article class="panel">
+            <div class="ph"><span class="ph-title">Security</span></div>
+            <div style="display:flex;flex-direction:column;gap:12px;font-size:0.84rem;">
+              <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span>Last Login</span>
+                <span style="color:var(--cream);font-family:var(--font-mono)">Apr 27, 2026 · 08:14</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span>Login Location</span>
+                <span style="color:var(--cream)">Kigali, Rwanda</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span>2-Factor Auth</span>
+                <span class="pill orange">⏳ Not Enabled</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0;">
+                <span>Session Timeout</span>
+                <span style="color:var(--cream)">30 minutes</span>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="toast('2FA setup coming soon','inf')">Enable 2FA →</button>
+            </div>
+          </article>
+
+        </div>
+
+      </div><!-- /settings -->
+
+    </main>
+  </div><!-- /main -->
+
+</div><!-- /appShell -->
+
+
+<!-- ── Logout Confirm Modal ── -->
+<div class="modal-bg" id="logoutModal" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
+  <div class="modal-box">
+    <div style="font-size:2.5rem;margin-bottom:14px;">🚪</div>
+    <h3 id="logoutTitle">Sign Out?</h3>
+    <p>You will be returned to the login screen. Any unsaved changes will be lost.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cancelLogout()">Cancel</button>
+      <button class="btn btn-terra" onclick="doLogout()">Yes, Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-area" id="toastArea" aria-live="polite"></div>
+
+<!-- External JavaScript file -->
+<script src="dashboard.js"></script>
+
+<!-- Sync settings account panel with logged-in user -->
+<script>
+  /* After bootApp sets the user, also fill account settings panel */
+  var _origBoot = bootApp;
+  bootApp = function() {
+    _origBoot();
+    var u = state.currentUser;
+    var n = document.getElementById('acctName');
+    var r = document.getElementById('acctRole');
+    if (n && u) n.value = u.name;
+    if (r && u) r.value = u.role;
+  };
+</script>
+
+</body>
+</html>
